@@ -1,0 +1,143 @@
+<xml>
+    <include name="${HXCPP}/build-tool/BuildCommon.xml"/>
+
+    <section if="windows">
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="oci.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="ocijdbc12.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="ociw32.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="oramysql12.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="orannzsbb12.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="oraocci12.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="oraocci12d.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="oraociei12.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="oraons.dll" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="orasql12.dll" />
+    </section>
+
+    <files id="hxoci_linux">
+        <!--https://stackoverflow.com/questions/32309029/occi-linkage-error-with-gcc-5-->
+        <compilerflag value="-D_GLIBCXX_USE_CXX11_ABI=0"/>
+        <compilerflag value="-I${haxelib:hxoracle}/oci/linux/include"/>
+
+        <file name="${this_dir}/OCI.cpp" />
+
+        <addTwice if="linux" />
+    </files>
+
+    <files id="hxoci_windows">
+        <compilerflag value="-I${haxelib:hxoracle}/oci/windows/include"/>
+        <file name="${this_dir}/OCI.cpp" />
+    </files>
+
+    <files id="oci_depends_linux">
+        <depend name="${this_dir}/../oci/linux/include/ldap.h" />
+        <depend name="${this_dir}/../oci/linux/include/nzerror.h" />
+        <depend name="${this_dir}/../oci/linux/include/nzt.h" />
+        <depend name="${this_dir}/../oci/linux/include/occi.h" />
+        <depend name="${this_dir}/../oci/linux/include/occiAQ.h" />
+        <depend name="${this_dir}/../oci/linux/include/occiCommon.h" />
+        <depend name="${this_dir}/../oci/linux/include/occiControl.h" />
+        <depend name="${this_dir}/../oci/linux/include/occiData.h" />
+        <depend name="${this_dir}/../oci/linux/include/occiObjects.h" />
+        <depend name="${this_dir}/../oci/linux/include/oci.h" />
+        <depend name="${this_dir}/../oci/linux/include/oci1.h" />
+        <depend name="${this_dir}/../oci/linux/include/oci8dp.h" />
+        <depend name="${this_dir}/../oci/linux/include/ociap.h" />
+        <depend name="${this_dir}/../oci/linux/include/ociapr.h" />
+        <depend name="${this_dir}/../oci/linux/include/ocidef.h" />
+        <depend name="${this_dir}/../oci/linux/include/ocidem.h" />
+        <depend name="${this_dir}/../oci/linux/include/ocidfn.h" />
+        <depend name="${this_dir}/../oci/linux/include/ociextp.h" />
+        <depend name="${this_dir}/../oci/linux/include/ocikpr.h" />
+        <depend name="${this_dir}/../oci/linux/include/ocixmldb.h" />
+        <depend name="${this_dir}/../oci/linux/include/ocixstream.h" />
+        <depend name="${this_dir}/../oci/linux/include/odci.h" />
+        <depend name="${this_dir}/../oci/linux/include/oratypes.h" />
+        <depend name="${this_dir}/../oci/linux/include/ori.h" />
+        <depend name="${this_dir}/../oci/linux/include/orid.h" />
+        <depend name="${this_dir}/../oci/linux/include/orl.h" />
+        <depend name="${this_dir}/../oci/linux/include/oro.h" />
+        <depend name="${this_dir}/../oci/linux/include/ort.h" />
+        <depend name="${this_dir}/../oci/linux/include/xa.h" />
+
+        <addTwice if="linux" />
+    </files>
+
+    <files id="oci_depends_windows">
+        <depend name="${this_dir}/../oci/windows/include/ldap.h"/>
+        <depend name="${this_dir}/../oci/windows/include/nzerror.h"/>
+        <depend name="${this_dir}/../oci/windows/include/nzt.h"/>
+        <depend name="${this_dir}/../oci/windows/include/occi.h"/>
+        <depend name="${this_dir}/../oci/windows/include/occiAQ.h"/>
+        <depend name="${this_dir}/../oci/windows/include/occiCommon.h"/>
+        <depend name="${this_dir}/../oci/windows/include/occiControl.h"/>
+        <depend name="${this_dir}/../oci/windows/include/occiData.h"/>
+        <depend name="${this_dir}/../oci/windows/include/occiObjects.h"/>
+        <depend name="${this_dir}/../oci/windows/include/oci.h"/>
+        <depend name="${this_dir}/../oci/windows/include/oci1.h"/>
+        <depend name="${this_dir}/../oci/windows/include/oci8dp.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ociap.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ociapr.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ocidef.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ocidem.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ocidfn.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ociextp.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ocikpr.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ocixml.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ocixmldb.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ocixstream.h"/>
+        <depend name="${this_dir}/../oci/windows/include/odci.h"/>
+        <depend name="${this_dir}/../oci/windows/include/oratypes.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ori.h"/>
+        <depend name="${this_dir}/../oci/windows/include/orid.h"/>
+        <depend name="${this_dir}/../oci/windows/include/orl.h"/>
+        <depend name="${this_dir}/../oci/windows/include/oro.h"/>
+        <depend name="${this_dir}/../oci/windows/include/ort.h"/>
+        <depend name="${this_dir}/../oci/windows/include/xa.h"/>
+    </files>
+
+    <echo value="${STD_MODULE_LINK}"/>
+
+    <target id="hx_oci_ndll" output="${LIBPREFIX}hxoci${HX_TARGET_SUFFIX}" tool="linker" toolid="${STD_MODULE_LINK}">
+        <!--<merge id="haxe" />-->
+
+        <libpath if="windows" name="../oci/windows/include/" />
+        <!--<libpath if="linux" name="../oci/linux/include/" />-->
+
+        <lib if="windows" name="${this_dir}/../oci/windows/lib/msvc/oci.lib"/>
+        <lib if="windows" name="${this_dir}/../oci/windows/lib/msvc/ociw32.lib"/>
+        <lib if="windows" name="${this_dir}/../oci/windows/lib/msvc/oramysql12.lib"/>
+        <lib if="windows" name="${this_dir}/../oci/windows/lib/msvc/oraocci12.lib"/>
+        <lib if="windows" name="${this_dir}/../oci/windows/lib/msvc/oraocci12d.lib"/>
+
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libnnz12.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libclntsh.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libclntshcore.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libocci.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libociei.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libocijdbc12.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libons.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/liboramysql12.so"/>
+
+        <files if="windows" id="oci_depends_windows"/>
+        <files if="linux" id="oci_depends_linux"/>
+
+        <files if="windows" id="hxoci_windows"/>
+        <files if="linux" id="hxoci_linux"/>
+
+
+        <vflag if="linux" name="-L" value="${this_dir}/../oci/linux/so/"/>
+        <lib if="linux" name="-lnnz12" />
+        <lib if="linux" name="-lclntsh" />
+        <lib if="linux" name="-locci" />
+
+        <compilerflag if="linux" value="-Wall,-rpath,'$ORIGIN/so/',-rpath-link,'../oci/linux/so/'" />
+
+        <outdir name="${NDLLDIR}/${BINDIR}" />
+    </target>
+
+    <target id="haxe">
+        <target id="hx_oci_ndll" />
+    </target>
+
+</xml>

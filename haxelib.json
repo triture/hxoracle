@@ -1,0 +1,13 @@
+{
+  "name": "hxoracle",
+  "url": "https://github.com/triture/hxoracle",
+  "license": "MIT",
+  "tags": [ "c++", "cpp", "oracle", "database", "native"],
+  "description": "Oracle database connector for Haxe CPP",
+  "version": "0.0.1",
+  "releasenote": "Initial release of Oracle Connector for Windows and Linux only.",
+  "contributors": [ "triture" ],
+  "dependencies": {
+    "hxcpp" : ""
+  }
+}

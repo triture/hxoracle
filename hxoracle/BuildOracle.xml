@@ -1,0 +1,26 @@
+<xml>
+
+    <files id="haxe">
+        <compilerflag if="linux" value="-D_GLIBCXX_USE_CXX11_ABI=0"/>
+        <!--<compilerflag if="linux" value="-v"/>-->
+    </files>
+
+    <target id="haxe">
+
+        <!--<lib if="linux" name="-lnnz12" />-->
+        <!--<lib if="linux" name="-lclntsh" />-->
+        <!--<lib if="linux" name="-locci" />-->
+
+        <flag if="linux" value="-Wl,-rpath,'$ORIGIN/:$ORIGIN/ndll/Linux64/:$ORIGIN/so/:/lib:/usr/lib'" />
+
+        <lib if="linux" name="${this_dir}/../../oci/linux/so/libnnz12.so"/>
+        <lib if="linux" name="${this_dir}/../../oci/linux/so/libclntsh.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../../oci/linux/so/libclntshcore.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../../oci/linux/so/libocci.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../../oci/linux/so/libociei.so"/>
+        <lib if="linux" name="${this_dir}/../../oci/linux/so/libocijdbc12.so"/>
+        <lib if="linux" name="${this_dir}/../../oci/linux/so/libons.so"/>
+        <lib if="linux" name="${this_dir}/../../oci/linux/so/liboramysql12.so"/>
+
+    </target>
+</xml>
