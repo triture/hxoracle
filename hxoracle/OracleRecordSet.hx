@@ -37,20 +37,29 @@ class OracleRecordSet {
 
             var value:Dynamic = this.__values[rowIndex][index];
 
-            //trace(rowIndex, fieldName, index, value);
-
             if (value == null) return null;
             else {
 
                 switch (type) {
                     case OracleDataType.NUMBER | OracleDataType.LONG: return Std.parseFloat(value);
                     case OracleDataType.DATE: {
+
+
                         var dateBreak:Array<String> = Std.string(value).split(";");
 
+                        var y:String = StringTools.lpad(dateBreak[0], "0", 4);
+                        var m:String = StringTools.lpad(Std.string(Std.parseInt(dateBreak[1])-1), "0", 2);
+                        var d:String = StringTools.lpad(dateBreak[2], "0", 2);
+
                         if (dateBreak.length == 3) {
-                            return new Date(Std.parseInt(dateBreak[0]), Std.parseInt(dateBreak[1])-1, Std.parseInt(dateBreak[2]), 0, 0, 0);
+                            return '$y-$m-$d 00:00:00';
+
                         } else if (dateBreak.length == 6) {
-                            return new Date(Std.parseInt(dateBreak[0]), Std.parseInt(dateBreak[1])-1, Std.parseInt(dateBreak[2]), Std.parseInt(dateBreak[3]), Std.parseInt(dateBreak[4]), Std.parseInt(dateBreak[5]));
+                            var hh:String = StringTools.lpad(dateBreak[3], "0", 2);
+                            var mm:String = StringTools.lpad(dateBreak[4], "0", 2);
+                            var ss:String = StringTools.lpad(dateBreak[5], "0", 2);
+
+                            return '$y-$m-$d $hh:$mm:$ss';
                         } else {
                             return null;
                         }
@@ -78,7 +87,22 @@ class OracleRecordSet {
     }
 
     public function getTypes():Array<OracleDataType> {
+        if (this.__types == null) return [];
         return this.__types.copy();
+    }
+
+    public function getSimpleTypes():Array<OracleDataTypeSimplified> {
+
+        var result:Array<OracleDataTypeSimplified> = [];
+
+        if (this.__types != null) {
+            for (item in this.__types) {
+                var simple:OracleDataTypeSimplified = item;
+                result.push(simple);
+            }
+        }
+
+        return result;
     }
 
     public function getFields():Array<String> {
