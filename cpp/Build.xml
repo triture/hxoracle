@@ -14,6 +14,22 @@
         <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/windows/dll" name="orasql12.dll" />
     </section>
 
+    <section if="linux">
+        <mkdir if="linux" name="so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libclntshcore.so.12.1" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libociei.so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libipc1.so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/liboramysql12.so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libons.so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libocci.so.12.1" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libocijdbc12.so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libclntsh.so.12.1" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libmql1.so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libnnz12.so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libocci.so" />
+        <copyFile toolId="exe" allowMissing="false" overwrite="never" from="${haxelib:hxoracle}/oci/linux/" name="so/libclntsh.so" />
+    </section>
+
     <files id="hxoci_linux">
         <!--https://stackoverflow.com/questions/32309029/occi-linkage-error-with-gcc-5-->
         <compilerflag value="-D_GLIBCXX_USE_CXX11_ABI=0"/>
@@ -95,8 +111,6 @@
         <depend name="${this_dir}/../oci/windows/include/ort.h"/>
         <depend name="${this_dir}/../oci/windows/include/xa.h"/>
     </files>
-
-    <echo value="${STD_MODULE_LINK}"/>
 
     <target id="hx_oci_ndll" output="${LIBPREFIX}hxoci${HX_TARGET_SUFFIX}" tool="linker" toolid="${STD_MODULE_LINK}">
         <!--<merge id="haxe" />-->

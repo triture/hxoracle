@@ -13,14 +13,14 @@
 
         <flag if="linux" value="-Wl,-rpath,'$ORIGIN/:$ORIGIN/ndll/Linux64/:$ORIGIN/so/:/lib:/usr/lib'" />
 
-        <lib if="linux" name="${this_dir}/../../oci/linux/so/libnnz12.so"/>
-        <lib if="linux" name="${this_dir}/../../oci/linux/so/libclntsh.so.12.1"/>
-        <lib if="linux" name="${this_dir}/../../oci/linux/so/libclntshcore.so.12.1"/>
-        <lib if="linux" name="${this_dir}/../../oci/linux/so/libocci.so.12.1"/>
-        <lib if="linux" name="${this_dir}/../../oci/linux/so/libociei.so"/>
-        <lib if="linux" name="${this_dir}/../../oci/linux/so/libocijdbc12.so"/>
-        <lib if="linux" name="${this_dir}/../../oci/linux/so/libons.so"/>
-        <lib if="linux" name="${this_dir}/../../oci/linux/so/liboramysql12.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libnnz12.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libclntsh.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libclntshcore.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libocci.so.12.1"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libociei.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libocijdbc12.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/libons.so"/>
+        <lib if="linux" name="${this_dir}/../oci/linux/so/liboramysql12.so"/>
 
     </target>
 </xml>
