@@ -48,7 +48,7 @@ class OracleRecordSet {
                         var dateBreak:Array<String> = Std.string(value).split(";");
 
                         var y:String = StringTools.lpad(dateBreak[0], "0", 4);
-                        var m:String = StringTools.lpad(Std.string(Std.parseInt(dateBreak[1])-1), "0", 2);
+                        var m:String = StringTools.lpad(dateBreak[1], "0", 2);
                         var d:String = StringTools.lpad(dateBreak[2], "0", 2);
 
                         if (dateBreak.length == 3) {
