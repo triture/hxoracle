@@ -127,12 +127,12 @@ value oci_request(value query, value printPlusValue)
                     counter = counter + 1;
                 }
             }
-
+            //cout << resultCounter;
+            //cout << " ";
 
             int n = typeOrder.size();
             for (int i = 0; i < n; i++)
             {
-
 
                 if (rs->isTruncated(i+1))
                 {
@@ -151,6 +151,26 @@ value oci_request(value query, value printPlusValue)
 
                         // eliminate object
                         valueDate.setNull();
+                    }
+                    else if (typeOrder[i] == 112)
+                    {
+                        // reference ftp://mail.hasjrat.co.id/Public/Backup/oracle/ora92/rdbms/demo/occiclob.cpp
+
+                        Clob clob = rs->getClob(i+1);
+                        unsigned int size = 512;
+                        unsigned int offset = 1;
+                        unsigned char *buffer = new unsigned char[size];
+                        memset(buffer, NULL, size);
+
+                        int bytesRead = clob.read(size, buffer, size, offset);
+
+                        for (int i = 0; i < bytesRead; ++i)
+                        {
+                            buffer_append_char(dataBuffer, buffer[i]);
+                        }
+
+                        delete []buffer;
+
                     }
                     else
                     {
