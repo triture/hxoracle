@@ -43,26 +43,8 @@ class OracleRecordSet {
                 switch (type) {
                     case OracleDataType.NUMBER | OracleDataType.LONG: return Std.parseFloat(value);
                     case OracleDataType.DATE: {
-
-
-                        var dateBreak:Array<String> = Std.string(value).split(";");
-
-                        var y:String = StringTools.lpad(dateBreak[0], "0", 4);
-                        var m:String = StringTools.lpad(dateBreak[1], "0", 2);
-                        var d:String = StringTools.lpad(dateBreak[2], "0", 2);
-
-                        if (dateBreak.length == 3) {
-                            return '$y-$m-$d 00:00:00';
-
-                        } else if (dateBreak.length == 6) {
-                            var hh:String = StringTools.lpad(dateBreak[3], "0", 2);
-                            var mm:String = StringTools.lpad(dateBreak[4], "0", 2);
-                            var ss:String = StringTools.lpad(dateBreak[5], "0", 2);
-
-                            return '$y-$m-$d $hh:$mm:$ss';
-                        } else {
-                            return null;
-                        }
+                        // date fields expected to be in yyyy-mm-dd hh:mm:ss format
+                        return value;
                     }
                     case _: return value;
                 }

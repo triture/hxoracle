@@ -43,7 +43,7 @@ value oci_connect(value username, value password, value connectString)
 
     try
     {
-        env = Environment::createEnvironment(Environment::OBJECT);
+        env = Environment::createEnvironment("UTF8", "UTF8", Environment::OBJECT);
         conn = env->createConnection(username_s, password_s, connectString_s);
 
         stmt = conn->createStatement();
@@ -147,7 +147,7 @@ value oci_request(value query, value printPlusValue)
                     if (typeOrder[i] == 12)
                     {
                         Date valueDate = rs->getDate(i+1);
-                        buffer_append(dataBuffer, valueDate.toText("YYYY;MM;DD;HH24;MI;SS").c_str());
+                        buffer_append(dataBuffer, valueDate.toText("YYYY-MM-DD HH24:MI:SS").c_str());
 
                         // eliminate object
                         valueDate.setNull();
@@ -157,7 +157,7 @@ value oci_request(value query, value printPlusValue)
                         // reference ftp://mail.hasjrat.co.id/Public/Backup/oracle/ora92/rdbms/demo/occiclob.cpp
 
                         Clob clob = rs->getClob(i+1);
-                        unsigned int size = 512;
+                        unsigned int size = clob.length() * 4; // four bytes per char is a good choice??
                         unsigned int offset = 1;
                         unsigned char *buffer = new unsigned char[size];
                         memset(buffer, NULL, size);
