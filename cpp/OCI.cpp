@@ -98,6 +98,17 @@ value oci_request(value query, value printPlusValue)
             {
                 rs->setMaxColumnSize(i+1, 1);
             }
+            else
+            {
+                if (
+                    typeOrder[i] != 12 &&
+                    typeOrder[i] && 112 &&
+                    metadataVector[i].getInt(MetaData::ATTR_DATA_SIZE) < 4096
+                )
+                {
+                    rs->setMaxColumnSize(i+1, 4096);
+                }
+            }
 
         }
 
@@ -134,11 +145,20 @@ value oci_request(value query, value printPlusValue)
             for (int i = 0; i < n; i++)
             {
 
-                if (rs->isTruncated(i+1))
-                {
-                    buffer_append(dataBuffer, "[oci~%~null]");
-                }
-                else if (rs->isNull(i+1))
+                // TODO create a way to retrieve truncated data
+//                if (rs->isTruncated(i+1))
+//                {
+//                    cout << endl;
+//                    cout << "trucated " << rs->preTruncationLength(i+1) << " - ";
+//                    cout << fieldNames[i];
+//                    cout << endl << rs->getString(i+1);
+//                    cout << endl;
+//
+//                    buffer_append(dataBuffer, "[oci~%~null]");
+//                }
+//                else
+
+                if (rs->isNull(i+1))
                 {
                     buffer_append(dataBuffer, "[oci~%~null]");
                 }
