@@ -102,7 +102,7 @@ value oci_request(value query, value printPlusValue)
             {
                 if (
                     typeOrder[i] != 12 &&
-                    typeOrder[i] && 112 &&
+                    typeOrder[i] != 112 &&
                     metadataVector[i].getInt(MetaData::ATTR_DATA_SIZE) < 4096
                 )
                 {
