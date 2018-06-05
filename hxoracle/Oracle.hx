@@ -1,5 +1,9 @@
 package hxoracle;
 
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
+import cpp.vm.Gc;
+
 @:buildXml(
 '
 <include name="${haxelib:hxoracle}/cpp/Build.xml" />
@@ -59,93 +63,71 @@ class Oracle {
             throw new OracleError(Std.string(data));
         } else {
 
+            var fields:Array<String> = data.field_names;
+            var types:Array<Int> = data.type_order;
+
             var bRow:String = "[~oci~%%~row]";
             var bNull:String = "[oci~%~null]";
             var bCol:String = "]/%/[";
 
             var dataString:String = data.result;
-            var values:Array<Array<String>> = [];
-            var rows:Array<String> = dataString.split(bRow);
 
-            if (rows.length > 0) {
-                rows.shift();
+            var bytesValues:BytesOutput = new BytesOutput();
+            var bytesPosition:Array<Int> = [];
 
-                for (i in 0 ... rows.length) {
-                    var row:Array<String> = [];
+            var lastPosition:Int = 0;
 
-                    var cols:Array<String> = rows.shift().split(bCol);
+            if (dataString != null) {
+                while (lastPosition < dataString.length) {
 
-                    for (j in 0 ... cols.length) {
-                        var value:String = cols.shift();
-                        if (value == bNull) row.push(null);
-                        else row.push(value);
+                    var index:Int = dataString.indexOf(bRow, lastPosition);
+                    var rowData:String = "";
 
+
+                    if (index == -1) {
+                        rowData = dataString.substring(lastPosition, dataString.length);
+                        lastPosition = dataString.length;
+                    } else {
+                        rowData = dataString.substring(lastPosition, index);
+                        lastPosition = index + bRow.length;
                     }
 
-                    values.push(row);
+                    var rowDataBreak:Array<String> = rowData.split(bCol);
+
+                    if (rowDataBreak.length == fields.length) {
+                        // validate null values
+                        for (i in 0 ... rowDataBreak.length) {
+                            if (rowDataBreak[i] == bNull) rowDataBreak[i] = null;
+                        }
+
+                        bytesPosition.push(bytesValues.length);
+                        bytesValues.writeString(haxe.Json.stringify(rowDataBreak) + "\n");
+                    }
+
                 }
             }
 
-            var fields:Array<String> = data.field_names;
-            var types:Array<Int> = data.type_order;
+
 
             var result:OracleRecordSet = new OracleRecordSet();
             result.__fields = fields;
             result.__types = types;
-            result.__values = values;
+            result.__bytesValue = new BytesInput(bytesValues.getBytes());
+            result.__bytesPosition = bytesPosition;
+
+            bytesValues.close();
+            bytesValues = null;
+            fields = null;
+            types = null;
+            data.field_names = null;
+            data.type_order = null;
+            data.result = null;
+            data = null;
+
+            Gc.compact();
 
             return result;
         }
-    }
-
-    public function requestBatch(tableName:String, fields:Array<String>, ?uniqueField:String = "", ?batchSize:Int = 5000, ?onUpdate:OracleRecordSet->Void = null):OracleRecordSet {
-        var batchMaxItems:Int = batchSize;
-        var result:OracleRecordSet = new OracleRecordSet();
-
-        var hasItems:Bool = true;
-        var indexStart:Int = 10000;
-
-        while (hasItems) {
-
-            var indexEnd:Int = indexStart + batchMaxItems;
-
-            var query:String = " ";
-            query += "SELECT " + fields.join(",") + " ";
-            query += "FROM (SELECT v.*, ROWNUM rnum FROM " + tableName + " v WHERE ROWNUM < " + indexEnd;
-
-            if (uniqueField != "") query += " AND " + uniqueField + " is not NULL ";
-
-            query += ") a ";
-            query += "WHERE a.rnum >= " + indexStart;
-
-            try {
-                Sys.sleep(0.2);
-
-                var tempResult:OracleRecordSet = this.request(query);
-
-                if (tempResult.length > 0) {
-                    result.__fields = tempResult.__fields;
-                    result.__types = tempResult.__types;
-
-                    if (result.__values == null) result.__values = [];
-
-                    // ORA-24550: signal received: Unhandled exception: Code=c0000005 Flags=0
-                    for (i in 0 ... tempResult.length) result.__values.push(tempResult.__values[i]);
-
-                    if (onUpdate != null) onUpdate(result);
-
-                    indexStart = indexEnd;
-                } else {
-                    hasItems = false;
-                }
-            } catch (e:OracleError) {
-                hasItems = false;
-                trace(e.toString());
-                return null;
-            }
-        }
-
-        return result;
     }
 
     public function terminate():Bool {

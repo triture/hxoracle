@@ -1,5 +1,7 @@
 package hxoracle;
 
+import haxe.io.BytesInput;
+
 class OracleRecordSet {
 
     @:allow(hxoracle.Oracle)
@@ -9,12 +11,15 @@ class OracleRecordSet {
     private var __types:Array<Int>;
 
     @:allow(hxoracle.Oracle)
-    private var __values:Array<Array<String>>;
+    private var __bytesValue:BytesInput;
+
+    @:allow(hxoracle.Oracle)
+    private var __bytesPosition:Array<Int>;
 
     public var length(get, null):Int;
 
     public function new() {
-
+        this.__bytesPosition = [];
     }
 
     public function getInfo():String {
@@ -29,13 +34,25 @@ class OracleRecordSet {
         if (this.__fields == null) return null;
         if (rowIndex >= this.length || rowIndex < 0) return null;
 
-        var index:Int = this.__fields.indexOf(fieldName);
 
-        if (index == -1) return null;
+        this.__bytesValue.position = this.__bytesPosition[rowIndex];
+        var dataString:String = this.__bytesValue.readLine();
+        var dataArray:Array<String> = [];
+
+        try {
+            dataArray = haxe.Json.parse(dataString);
+        } catch(e:Dynamic) {
+            return null;
+        }
+
+        var columnIndex:Int = this.__fields.indexOf(fieldName);
+
+        if (columnIndex == -1) return null;
+        else if (columnIndex > dataArray.length - 1) return null;
         else {
-            var type:OracleDataType = this.__types[index];
+            var type:OracleDataType = this.__types[columnIndex];
 
-            var value:Dynamic = this.__values[rowIndex][index];
+            var value:Dynamic = dataArray[columnIndex];
 
             if (value == null) return null;
             else {
@@ -93,7 +110,7 @@ class OracleRecordSet {
     }
 
     private function get_length():Int {
-        if (this.__values == null) return 0;
-        return this.__values.length;
+        if (this.__bytesPosition == null) return 0;
+        return this.__bytesPosition.length;
     }
 }
