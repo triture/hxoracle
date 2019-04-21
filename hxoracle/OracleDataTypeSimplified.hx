@@ -16,13 +16,14 @@ abstract OracleDataTypeSimplified(String) to String from String {
             case OracleDataType.UNDEFINED: return OracleDataTypeSimplified.UNDEFINED;
 
             case OracleDataType.NUMBER
-                | OracleDataType.LONG
                 | OracleDataType.ROWID: return OracleDataTypeSimplified.NUMBER;
 
             case OracleDataType.DATE: return OracleDataTypeSimplified.DATE;
 
             case OracleDataType.CHAR
                 | OracleDataType.VARCHAR
+                | OracleDataType.LONG
+                | OracleDataType.LONG_RAW
                 | OracleDataType.CLOB: return OracleDataTypeSimplified.TEXT;
 
             case _: return OracleDataTypeSimplified.OTHER;

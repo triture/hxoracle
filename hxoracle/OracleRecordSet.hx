@@ -1,5 +1,7 @@
 package hxoracle;
 
+import haxe.io.Bytes;
+import haxe.io.BytesOutput;
 import haxe.io.BytesInput;
 
 class OracleRecordSet {
@@ -58,7 +60,7 @@ class OracleRecordSet {
             else {
 
                 switch (type) {
-                    case OracleDataType.NUMBER | OracleDataType.LONG: return Std.parseFloat(value);
+                    case OracleDataType.NUMBER: return Std.parseFloat(value);
                     case OracleDataType.DATE: {
                         // date fields expected to be in yyyy-mm-dd hh:mm:ss format
                         return value;

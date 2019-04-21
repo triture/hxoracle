@@ -12,11 +12,14 @@ import cpp.vm.Gc;
 )
 class Oracle {
 
+    public var debug:Bool = false;
+
     private static var _oci_connect;
     private static var _oci_request;
     private static var _oci_terminate;
 
     private var connected:Bool;
+    private var dataIndex:Int;
 
     public function new() {
 
@@ -28,11 +31,13 @@ class Oracle {
 
 
                 _oci_connect = cpp.Lib.load("hxoci", "oci_connect", 3 );
-                _oci_request = cpp.Lib.load("hxoci", "oci_request", 2 );
-                _oci_terminate = cpp.Lib.load("hxoci", "oci_terminate", 0 );
+                _oci_request = cpp.Lib.load("hxoci", "oci_request", 4 );
+                _oci_terminate = cpp.Lib.load("hxoci", "oci_terminate", 1 );
 
             } catch (e:Dynamic) {
-                trace(e);
+                Sys.println("");
+                Sys.println(" ERROR : Try to install Visual C Redistributable Packs");
+                Sys.println("");
                 Sys.exit(0);
             }
         }
@@ -47,8 +52,14 @@ class Oracle {
             if (Std.is(data, String)) {
                 // ocorreu um erro na requisicao
                 throw new OracleError(Std.string(data));
-            } else {
+            } else if (Std.is(data, Int)) {
+
+                this.dataIndex = data;
                 this.connected = true;
+
+            } else {
+                this.connected = false;
+                throw new OracleError("Undefined Error");
             }
         }
 
@@ -57,7 +68,7 @@ class Oracle {
 
 
     public function request(query:String, printPlus:Bool = false):OracleRecordSet {
-        var data:Dynamic = _oci_request(query, printPlus);
+        var data:Dynamic = _oci_request(this.dataIndex, query, printPlus, this.debug);
 
         if (Std.is(data, String)) {
             throw new OracleError(Std.string(data));
@@ -132,7 +143,7 @@ class Oracle {
 
     public function terminate():Bool {
         if (this.connected) {
-            var data:Dynamic = cast _oci_terminate();
+            var data:Dynamic = cast _oci_terminate(this.dataIndex);
 
             if (Std.is(data, String)) {
                 // ocorreu um erro na requisicao

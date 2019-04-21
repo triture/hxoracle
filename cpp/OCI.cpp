@@ -16,11 +16,13 @@
 using namespace std;
 using namespace oracle::occi;
 
-Environment *env;
-Connection *conn;
-Statement *stmt;
+//Environment *env;
+//Connection *conn;
+//Statement *stmt;
 
-
+vector<Environment*> vec_env;
+vector<Connection*> vec_conn;
+vector<Statement*> vec_stmt;
 
 value convertToVal(string baseStr) {
     char* str;
@@ -36,18 +38,22 @@ value convertToVal(string baseStr) {
 value oci_connect(value username, value password, value connectString)
 {
 
-
     string username_s = val_string(username);
     string password_s = val_string(password);
     string connectString_s = val_string(connectString);
 
     try
     {
-        env = Environment::createEnvironment("UTF8", "UTF8", Environment::OBJECT);
-        conn = env->createConnection(username_s, password_s, connectString_s);
 
-        stmt = conn->createStatement();
+        Environment *env = Environment::createEnvironment("UTF8", "UTF8", Environment::OBJECT);
+        Connection *conn = env->createConnection(username_s, password_s, connectString_s);
+        Statement *stmt = conn->createStatement();
+
         stmt->setPrefetchRowCount(200);
+
+        vec_env.push_back(env);
+        vec_conn.push_back(conn);
+        vec_stmt.push_back(stmt);
 
     }
     catch (SQLException ex)
@@ -60,17 +66,24 @@ value oci_connect(value username, value password, value connectString)
        return alloc_string(excp.what());
     }
 
-    return alloc_bool(true);
+    return alloc_int(vec_env.size() - 1);
 }
 
-value oci_request(value query, value printPlusValue)
+value oci_request(value index, value query, value printPlusValue, value isDebugValue)
 {
     try
     {
         string queryString = val_string(query);
+        bool isDebug = val_bool(isDebugValue);
         bool printPlus = val_bool(printPlusValue);
+        int indexValue = val_int(index);
 
-        ResultSet *rs = stmt->executeQuery(queryString);
+        if (isDebug) {
+            cout << "" << endl;
+            cout << " ORACLE :: executando query - " << queryString << endl;
+        }
+
+        ResultSet *rs = vec_stmt[indexValue]->executeQuery(queryString);
 
         // vectors para armazenar conteudo do resultset
         vector<int> typeOrder;
@@ -85,10 +98,18 @@ value oci_request(value query, value printPlusValue)
 
         buffer dataBuffer = alloc_buffer(NULL);
 
+        if (isDebug) {
+            cout << " ORACLE ::  - METADATA: " << endl;
+        }
 
         // validando as colunas recuperadas
         for (int i = 0; i < metadataVector.size(); i++)
         {
+
+            if (isDebug) {
+                cout << " ORACLE ::      " << metadataVector[i].getString(MetaData::ATTR_NAME) << " :: TYPE - " << metadataVector[i].getInt(MetaData::ATTR_DATA_TYPE) << endl;
+            }
+
             fieldNames.push_back(metadataVector[i].getString(MetaData::ATTR_NAME));
             typeOrder.push_back(metadataVector[i].getInt(MetaData::ATTR_DATA_TYPE));
 
@@ -115,18 +136,23 @@ value oci_request(value query, value printPlusValue)
         // eliminando dados do metadata
         //vector<MetaData>().swap(metadataVector);
 
-        //cout << "iniciando de record set" << endl;
+        if (isDebug) {
+            cout << " ORACLE ::  - DADOS: " << endl;
+        }
 
         int counter = 0;
+        int rowCounter = 0;
         int resultCounter = -1;
 
         while (rs->next())
         {
+            rowCounter = rowCounter + 1;
+
             buffer_append(dataBuffer, "[~oci~%%~row]");
 
             resultCounter = resultCounter + 1;
 
-            if (printPlus)
+            if (isDebug == false && printPlus)
             {
                 if (counter > 1000)
                 {
@@ -202,7 +228,10 @@ value oci_request(value query, value printPlusValue)
                 if (i < n - 1) {
                     buffer_append(dataBuffer, "]/%/[");
                 }
+            }
 
+            if (isDebug) {
+                cout << " ORACLE ::      row " << rowCounter << " loaded" << endl;
             }
         }
 
@@ -231,7 +260,7 @@ value oci_request(value query, value printPlusValue)
 //        vector<value>().swap(valueData);
 
         // terminate resultset
-        stmt->closeResultSet(rs);
+        vec_stmt[indexValue]->closeResultSet(rs);
 //        delete rs;
 
         //conn->terminateStatement(stmt);
@@ -255,17 +284,19 @@ value oci_request(value query, value printPlusValue)
     return alloc_empty_object();
 }
 
-value oci_terminate()
+value oci_terminate(value index)
 {
     try
     {
-        conn->terminateStatement(stmt);
+        int valueIndex = val_int(index);
+
+        vec_conn[valueIndex]->terminateStatement(vec_stmt[valueIndex]);
         //cout << "stmt terminated" << endl;
 
-        env->terminateConnection(conn);
+        vec_env[valueIndex]->terminateConnection(vec_conn[valueIndex]);
         //cout << "conn terminated" << endl;
 
-        Environment::terminateEnvironment(env);
+        Environment::terminateEnvironment(vec_env[valueIndex]);
 
     }
     catch (SQLException ex)
@@ -283,5 +314,5 @@ value oci_terminate()
 }
 
 DEFINE_PRIM(oci_connect, 3);
-DEFINE_PRIM(oci_request, 2);
-DEFINE_PRIM(oci_terminate, 0);
+DEFINE_PRIM(oci_request, 4);
+DEFINE_PRIM(oci_terminate, 1);
